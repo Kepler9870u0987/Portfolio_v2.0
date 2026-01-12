@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Linkedin, Send, Loader2, CheckCircle, AlertCircle, Settings, Copy, Check, Sparkles } from 'lucide-react';
 import { send } from '@emailjs/browser';
+import { sendMessageToGemini } from '../services/geminiService';
 import { SectionId } from '../types';
 
 // CONFIGURAZIONE EMAILJS
@@ -10,16 +11,20 @@ const EMAILJS_PUBLIC_KEY = "W7V6Y2BeuyPqp_mfS";
 
 interface ContactFooterProps {
   initialMessage?: string;
+  lastUpdate?: number;
+  chatHistory?: string; // Nuova prop che contiene il testo della chat
 }
 
-export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) => {
+export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage, lastUpdate, chatHistory }) => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [isSummarizing, setIsSummarizing] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [configError, setConfigError] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [copied, setCopied] = useState(false);
 
+  // Forza l'aggiornamento del campo messaggio quando cambia il timestamp lastUpdate (vecchio metodo)
   useEffect(() => {
     if (initialMessage) {
       setFormData(prev => ({
@@ -27,7 +32,31 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
         message: initialMessage
       }));
     }
-  }, [initialMessage]);
+  }, [initialMessage, lastUpdate]);
+
+  const handleGenerateSummary = async () => {
+    if (chatHistory) {
+        setIsSummarizing(true);
+        try {
+            // PROMPT PER IL FOOTER
+            // Se l'utente clicca il bottone nel footer, usiamo l'AI per riassumere la history grezza.
+            const prompt = `Ecco una trascrizione di una chat con un cliente:\n\n${chatHistory}\n\nGenera un riassunto schematico per punti elenco delle esigenze del cliente, da inserire in una mail di richiesta preventivo. Sii breve e professionale.`;
+            
+            const aiSummary = await sendMessageToGemini(prompt);
+            
+            const finalMessage = `Ciao Manuel,\n\nHo interagito con il tuo assistente AI. Ecco il riassunto della conversazione:\n\n${aiSummary}\n\nVorrei capire come implementare queste soluzioni nella mia azienda.`;
+            
+            setFormData(prev => ({ ...prev, message: finalMessage }));
+        } catch (error) {
+            console.error("Errore riassunto AI nel footer", error);
+            // Fallback manuale
+            const manualSummary = `Ciao Manuel,\n\nHo interagito con il tuo assistente AI. Ecco il log della conversazione:\n\n${chatHistory}`;
+            setFormData(prev => ({ ...prev, message: manualSummary }));
+        } finally {
+            setIsSummarizing(false);
+        }
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -70,18 +99,10 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
     setErrorMessage('');
 
     try {
-      // CONFIGURAZIONE DESTINATARI
-      // NOTA CRITICA: Se ottieni Error 422 "Recipients address is empty", 
-      // significa che nel Template EmailJS (Dashboard -> Email Templates -> Settings),
-      // il campo "To Email" è vuoto o la variabile {{to_email}} non è settata correttamente.
       const templateParams = {
-        // La mail arriverà a questo indirizzo (Manuel)
         to_email: "manuel.albanese.lavoro@gmail.com", 
-        // Quando Manuel clicca "Rispondi", la mail andrà a questo indirizzo (Utente)
         reply_to: formData.email, 
-        // Nome visibile nel corpo della mail
         from_name: formData.name,
-        // Contenuto del messaggio
         message: formData.message,
       };
 
@@ -96,7 +117,6 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
       setFormData({ name: '', email: '', message: '' });
     } catch (error: any) {
       console.error('EmailJS Error:', error);
-      // Estrae il messaggio di errore se disponibile (es. da oggetto EmailJSResponseStatus)
       const msg = error?.text || error?.message || JSON.stringify(error);
       setErrorMessage(msg);
       setStatus('error');
@@ -104,8 +124,9 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
   };
 
   return (
-    <footer id={SectionId.CONTACT} className="bg-slate-900/80 backdrop-blur-md pt-16 pb-8 border-t border-slate-800 scroll-mt-20" aria-labelledby="contact-heading">
-      <div className="container mx-auto px-6">
+    // Removed specific background opacity to blend with global background
+    <footer id={SectionId.CONTACT} className="pt-16 pb-8 border-t border-slate-800/50 scroll-mt-20 relative overflow-hidden" aria-labelledby="contact-heading">
+      <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-12">
           
           {/* Contact Info */}
@@ -141,7 +162,7 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
 
           {/* Contact Form */}
           <div className="lg:w-1/2">
-            <div className="bg-slate-950/80 backdrop-blur p-8 rounded-2xl border border-slate-800 shadow-xl">
+            <div className="bg-slate-900/60 backdrop-blur-xl p-8 rounded-2xl border border-slate-800 shadow-xl">
               <h3 className="text-xl font-semibold text-white mb-6">Invia un messaggio</h3>
               
               {status === 'success' ? (
@@ -203,12 +224,29 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage }) 
                   </div>
                   
                   <div className="relative">
-                    <div className="flex justify-between items-center mb-1.5">
+                    <div className="flex justify-between items-center mb-1.5 flex-wrap gap-2">
                        <label htmlFor="message" className="block text-sm font-medium text-slate-300 uppercase">Messaggio *</label>
-                       {initialMessage && formData.message === initialMessage && (
-                          <span className="text-xs text-accent-400 flex items-center gap-1 animate-pulse">
-                            <Sparkles size={10} /> Compilato con AI
-                          </span>
+                       
+                       {/* BOTTONE GENERA RIASSUNTO - STILE PREMIUM */}
+                       {chatHistory && (
+                           <button 
+                             type="button" 
+                             onClick={handleGenerateSummary}
+                             disabled={isSummarizing}
+                             className="group relative flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide transition-all duration-300
+                               bg-gradient-to-r from-accent-500/10 to-purple-500/10 border border-accent-500/30 text-accent-200
+                               hover:from-accent-500/20 hover:to-purple-500/20 hover:border-accent-500/60 hover:text-white hover:shadow-[0_0_15px_rgba(99,102,241,0.3)] hover:-translate-y-0.5
+                               disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none animate-fade-in-up"
+                           >
+                             <span className="relative z-10 flex items-center gap-2">
+                                {isSummarizing ? (
+                                   <Loader2 size={14} className="animate-spin text-accent-400" />
+                                ) : (
+                                   <Sparkles size={14} className="text-accent-400 group-hover:text-yellow-300 transition-colors" />
+                                )}
+                                {isSummarizing ? 'Analisi in corso...' : 'Importa riassunto Chat AI'}
+                             </span>
+                           </button>
                        )}
                     </div>
                     <textarea

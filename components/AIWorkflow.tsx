@@ -27,7 +27,7 @@ export const AIWorkflow: React.FC = () => {
   ];
 
   return (
-    <section id={SectionId.WORKFLOW} className="py-24 bg-slate-950/40 backdrop-blur-sm border-t border-slate-900/50 scroll-mt-20" aria-labelledby="workflow-title">
+    <section id={SectionId.WORKFLOW} className="py-24 relative scroll-mt-20" aria-labelledby="workflow-title">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <span className="text-accent-500 font-semibold tracking-wider text-sm uppercase">Il Metodo</span>

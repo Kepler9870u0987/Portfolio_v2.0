@@ -4,7 +4,7 @@ import { SectionId } from '../types';
 
 export const AboutStory: React.FC = () => {
   return (
-    <section id={SectionId.ABOUT} className="py-24 bg-slate-950/30 backdrop-blur-sm relative overflow-hidden scroll-mt-20" aria-labelledby="about-title">
+    <section id={SectionId.ABOUT} className="py-24 relative overflow-hidden scroll-mt-20" aria-labelledby="about-title">
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           

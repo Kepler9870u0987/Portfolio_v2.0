@@ -14,7 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export const Services: React.FC = () => {
   return (
-    <section id={SectionId.SERVICES} className="py-24 bg-slate-950/30 backdrop-blur-sm scroll-mt-20" aria-labelledby="services-title">
+    <section id={SectionId.SERVICES} className="py-24 relative scroll-mt-20" aria-labelledby="services-title">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 id="services-title" className="text-3xl md:text-5xl font-bold text-white mb-4">Servizi & Tecnologie</h2>

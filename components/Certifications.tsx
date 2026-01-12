@@ -13,7 +13,7 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export const Certifications: React.FC = () => {
   return (
-    <section id={SectionId.CERTIFICATIONS} className="py-20 bg-slate-950/30 backdrop-blur-sm border-t border-slate-800/50 scroll-mt-20" aria-labelledby="cert-title">
+    <section id={SectionId.CERTIFICATIONS} className="py-20 relative scroll-mt-20" aria-labelledby="cert-title">
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
           <div>
