@@ -6,13 +6,13 @@ export const Hero: React.FC = () => {
   return (
     <section id={SectionId.HERO} className="relative min-h-screen flex items-center pt-20 md:pt-0 overflow-hidden scroll-mt-28" aria-label="Introduzione">
       
-      <div className="container mx-auto px-6 relative z-10 flex flex-col-reverse lg:flex-row items-center gap-12 py-12 lg:py-0 mb-12 lg:mb-0">
+      <div className="container mx-auto px-6 relative z-10 flex flex-col-reverse lg:flex-row items-center gap-12 pt-12 pb-32 lg:py-0 mb-0 lg:mb-0">
         <div className="max-w-4xl lg:w-2/3">
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 md:mb-8 tracking-tight leading-tight opacity-0 animate-fade-in-up">
             Siti Web & <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-purple-400">Knowledge Management</span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-300 mb-8 md:mb-10 max-w-2xl leading-relaxed opacity-0 animate-fade-in-up delay-200">
+          <p className="text-lg md:text-xl text-slate-200 mb-8 md:mb-10 max-w-2xl leading-relaxed opacity-0 animate-fade-in-up delay-200 font-medium">
             Aiuto le aziende a <strong>costruire siti web</strong> performanti e a gestire la conoscenza aziendale con l'AI. 
             Implemento sistemi <strong>RAG</strong> per ottimizzare il <em>passaggio di consegne</em>, velocizzare il recupero delle informazioni e generare documenti da template intelligenti.
           </p>
@@ -21,7 +21,7 @@ export const Hero: React.FC = () => {
           <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up delay-300">
             <a 
               href={`#${SectionId.DEMO}`}
-              className="px-8 py-4 bg-accent-600 text-white rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg shadow-accent-600/20 hover:bg-accent-700 hover:shadow-accent-600/40 hover:scale-105 active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-accent-500"
+              className="px-8 py-4 bg-accent-600 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg shadow-accent-600/20 hover:bg-accent-700 hover:shadow-accent-600/40 hover:scale-105 active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 focus:outline-none"
             >
               Parla con la mia AI
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
@@ -32,7 +32,7 @@ export const Hero: React.FC = () => {
               href="https://www.linkedin.com/in/manuel-albanese" 
               target="_blank" 
               rel="noreferrer"
-              className="px-8 py-4 bg-[#0077b5] text-white rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#006396] hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 focus:ring-2 focus:ring-offset-2 focus:ring-[#0077b5]"
+              className="px-8 py-4 bg-[#0077b5] text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#006396] hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 focus:ring-2 focus:ring-offset-2 focus:ring-[#0077b5] focus:outline-none"
             >
               <Linkedin size={20} aria-hidden="true" />
               Contattami su LinkedIn
@@ -41,12 +41,12 @@ export const Hero: React.FC = () => {
 
           {/* Tech Stack Pills */}
           <div className="mt-12 md:mt-16 pt-8 border-t border-slate-800/50 opacity-0 animate-fade-in-up delay-500">
-            <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-4">Core Services</p>
+            <p className="text-slate-400 text-sm font-bold uppercase tracking-wider mb-4">Core Services</p>
             <div className="flex flex-wrap gap-4 text-slate-300">
-              <span className="flex items-center gap-2 hover:text-white transition-colors"><Code size={16} aria-hidden="true" /> Web Development</span>
-              <span className="flex items-center gap-2 hover:text-white transition-colors"><Database size={16} aria-hidden="true" /> Knowledge Management</span>
-              <span className="flex items-center gap-2 hover:text-white transition-colors"><FileText size={16} aria-hidden="true" /> Doc Generation</span>
-              <span className="flex items-center gap-2 hover:text-white transition-colors"><span className="font-bold text-accent-400">RAG</span> Systems</span>
+              <span className="flex items-center gap-2 hover:text-white transition-colors font-medium"><Code size={16} aria-hidden="true" /> Web Development</span>
+              <span className="flex items-center gap-2 hover:text-white transition-colors font-medium"><Database size={16} aria-hidden="true" /> Knowledge Management</span>
+              <span className="flex items-center gap-2 hover:text-white transition-colors font-medium"><FileText size={16} aria-hidden="true" /> Doc Generation</span>
+              <span className="flex items-center gap-2 hover:text-white transition-colors font-medium"><span className="font-bold text-accent-400">RAG</span> Systems</span>
             </div>
           </div>
         </div>
@@ -65,21 +65,21 @@ export const Hero: React.FC = () => {
                 />
                 <div className="absolute bottom-0 right-4 bg-slate-900 border border-slate-700 p-2 rounded-lg shadow-lg flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full animate-ping" aria-hidden="true"></div>
-                    <span className="text-xs font-medium text-white">Open to Work</span>
+                    <span className="text-xs font-bold text-white">Open to Work</span>
                 </div>
             </div>
         </div>
       </div>
 
-      {/* Floating Animated Scroll Button */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 animate-fade-in-up delay-1000 z-20">
+      {/* Floating Animated Scroll Button - Centered Correctly for Mobile */}
+      <div className="absolute bottom-4 left-0 right-0 z-20 flex justify-center opacity-0 animate-fade-in-up delay-1000 w-full pointer-events-none">
         <a 
             href={`#${SectionId.DEMO}`}
             aria-label="Scorri giù alla demo"
-            className="flex flex-col items-center gap-2 text-slate-400 hover:text-white transition-colors animate-bounce p-4"
+            className="flex flex-col items-center gap-2 text-slate-400 hover:text-white transition-colors animate-bounce p-4 pointer-events-auto"
         >
-            <span className="text-xs uppercase tracking-widest font-medium">Scopri l'AI</span>
-            <ChevronsDown size={24} className="text-accent-500" />
+            <span className="text-xs uppercase tracking-widest font-bold">Scopri l'AI</span>
+            <ChevronsDown size={28} className="text-accent-500 drop-shadow-md" />
         </a>
       </div>
     </section>

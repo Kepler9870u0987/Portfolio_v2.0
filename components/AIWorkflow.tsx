@@ -42,7 +42,7 @@ export const AIWorkflow: React.FC = () => {
           <div className="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-slate-800 -translate-y-1/2 z-0" aria-hidden="true"></div>
 
           {/* Steps Grid - Increased gap for mobile to accommodate arrows */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 md:gap-12 lg:gap-8 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-20 md:gap-12 lg:gap-8 relative z-10">
             {steps.map((step, idx) => (
               <article key={idx} className="group relative flex flex-col">
                 {/* Card */}
@@ -58,8 +58,8 @@ export const AIWorkflow: React.FC = () => {
                 
                 {/* Mobile Connector Arrow (Absolute Positioned in the Gap) */}
                 {idx < steps.length - 1 && (
-                  <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 z-20 md:hidden" aria-hidden="true">
-                    <div className="w-8 h-8 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center shadow-lg text-accent-500">
+                  <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 z-20 md:hidden" aria-hidden="true">
+                    <div className="w-8 h-8 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center shadow-lg text-accent-500 animate-bounce delay-700">
                        <ArrowRight size={16} className="rotate-90" />
                     </div>
                   </div>

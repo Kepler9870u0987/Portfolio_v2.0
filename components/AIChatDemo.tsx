@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Sparkles, Loader2, MessageSquarePlus, ArrowRight, Database, ShieldCheck, FileText, Globe, Users } from 'lucide-react';
+import { Send, Bot, User, Sparkles, Loader2, Database, ShieldCheck, FileText, Globe, Users, Code, ArrowUpRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { sendMessageToGemini } from '../services/geminiService';
 import { ChatMessage, SectionId } from '../types';
@@ -9,37 +9,47 @@ interface AIChatDemoProps {
   onChatUpdate?: (history: string) => void;
 }
 
-// EXPANDED QUESTIONS LIST FOR MASONRY LAYOUT
-// Covers: RAG, Automation, Web Dev, Security, Onboarding
+const cleanMarkdownResponse = (text: string) => {
+  if (!text) return "";
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '$1') 
+    .replace(/\*(.*?)\*/g, '$1')     
+    .replace(/#{1,6}\s*(.*)/g, (match, p1) => `\n${p1.toUpperCase()}\n`) 
+    .replace(/`{3}([\s\S]*?)`{3}/g, '$1') 
+    .replace(/`(.+?)`/g, '$1') 
+    .replace(/^\s*-\s/gm, '• ') 
+    .trim();
+};
+
 const SUGGESTED_QUESTIONS = [
   { 
     text: "Cos'è un sistema RAG e come gestisce i miei PDF?", 
-    icon: <Database size={14} />,
+    icon: <Database size={16} className="text-purple-400" />,
     delay: "0ms" 
   },
   { 
     text: "Voglio automatizzare la creazione di preventivi.", 
-    icon: <FileText size={14} />,
+    icon: <FileText size={16} className="text-blue-400" />,
     delay: "100ms" 
   },
   { 
     text: "Ho bisogno di un nuovo sito web performante.", 
-    icon: <Globe size={14} />,
+    icon: <Globe size={16} className="text-green-400" />,
     delay: "200ms" 
   },
   { 
     text: "Le soluzioni AI sono GDPR compliant e sicure?", 
-    icon: <ShieldCheck size={14} />,
+    icon: <ShieldCheck size={16} className="text-yellow-400" />,
     delay: "300ms" 
   },
   { 
     text: "Come velocizzo l'onboarding dei nuovi assunti?", 
-    icon: <Users size={14} />,
+    icon: <Users size={16} className="text-pink-400" />,
     delay: "400ms" 
   },
   { 
     text: "Integrare l'AI nei miei vecchi database SQL.", 
-    icon: <Database size={14} />,
+    icon: <Code size={16} className="text-orange-400" />,
     delay: "500ms" 
   }
 ];
@@ -55,7 +65,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false); // State for summary generation
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -73,17 +83,12 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Update parent component with chat history whenever messages change
   useEffect(() => {
     if (onChatUpdate) {
       const interactionHistory = messages
-        .filter(m => m.id !== 'welcome') // Exclude the static welcome message
-        .map(m => {
-            const roleLabel = m.role === 'user' ? '👤 UTENTE' : '🤖 AI ASSISTANT';
-            return `[${roleLabel}]: ${m.text}`;
-        })
+        .filter(m => m.id !== 'welcome')
+        .map(m => `[${m.role === 'user' ? 'UTENTE' : 'AI'}]: ${m.text}`)
         .join('\n\n');
-        
       onChatUpdate(interactionHistory);
     }
   }, [messages, onChatUpdate]);
@@ -126,28 +131,22 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
     setIsGeneratingSummary(true);
     
     try {
-      // PROMPT PER IL RIASSUNTO
-      // Questo è il prompt specifico che genera il testo della mail
       const summaryPrompt = `
         Analizza la nostra conversazione finora.
-        Genera un riassunto strutturato per punti elenco (bullet points) delle mie esigenze e dei servizi di Manuel (Web, RAG, Automation) che potrebbero essermi utili.
-        Il testo deve essere pronto per essere inviato via mail come richiesta di preventivo.
-        Non aggiungere premesse come "Ecco il riassunto", scrivi direttamente i punti.
+        Genera un riassunto strutturato per punti elenco delle mie esigenze e dei servizi di Manuel.
+        Sii sintetico e professionale.
       `;
 
-      // Use the existing session to maintain context
-      const summaryText = await sendMessageToGemini(summaryPrompt);
+      let summaryText = await sendMessageToGemini(summaryPrompt);
+      const cleanText = cleanMarkdownResponse(summaryText);
 
-      const emailBody = `Ciao Manuel,\n\nHo parlato con il tuo assistente AI. Ecco i punti chiave delle mie esigenze:\n\n${summaryText}\n\nVorrei approfondire queste soluzioni.`;
+      const emailBody = `Ciao Manuel,\n\nHo parlato con il tuo assistente AI. Ecco i punti chiave delle mie esigenze:\n\n${cleanText}\n\nVorrei approfondire queste soluzioni.`;
       
       if (onTransferChat) {
         onTransferChat(emailBody);
       }
     } catch (error) {
       console.error("Errore generazione riassunto", error);
-      // Fallback in case of error
-      const rawHistory = messages.filter(m => m.role === 'user').map(m => `- ${m.text}`).join('\n');
-      onTransferChat(`Ciao Manuel,\n\nEcco le mie richieste:\n${rawHistory}`);
     } finally {
       setIsGeneratingSummary(false);
     }
@@ -156,140 +155,108 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
   const hasUserMessages = messages.some(m => m.role === 'user');
 
   return (
-    <section id={SectionId.DEMO} className="py-8 md:py-24 relative overflow-hidden scroll-mt-16 w-full" aria-labelledby="ai-demo-title">
+    <section id={SectionId.DEMO} className="py-8 md:py-24 relative w-full" aria-labelledby="ai-demo-title">
       
       <div className="container mx-auto px-4 md:px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row lg:gap-16 items-start">
+        <div className="flex flex-col lg:flex-row lg:gap-12 items-start">
           
-          {/* Left Side: Pitch & Masonry Suggestions */}
-          <div className="w-full lg:w-1/2 text-white mb-12 lg:mb-0">
-            <div className="inline-flex items-center gap-2 bg-accent-600/20 text-accent-500 px-3 py-1.5 rounded-full mb-4 border border-accent-600/30 backdrop-blur-md">
-              <Sparkles size={16} aria-hidden="true" />
-              <span className="font-semibold text-xs uppercase tracking-wide">Consulenza Istantanea</span>
+          {/* Left Side: Context & Suggestions */}
+          <div className="w-full lg:w-5/12 text-white mb-8 lg:mb-0 lg:sticky lg:top-24">
+            <div className="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 px-3 py-1 rounded-full mb-6 border border-indigo-500/20 backdrop-blur-md">
+              <Sparkles size={14} className="animate-pulse" />
+              <span className="font-bold text-[10px] md:text-xs uppercase tracking-wider">AI Powered Assistant</span>
             </div>
-            <h2 id="ai-demo-title" className="text-3xl md:text-5xl font-bold mb-6 leading-tight">
-              Scopri come l'AI può <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-purple-400">scalare il tuo Business</span>
+            
+            <h2 id="ai-demo-title" className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+              Parla con il mio <br/>
+              {/* FIXED: Using standard Tailwind colors for gradient to ensure visibility */}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400 font-extrabold">Digital Brain</span>
             </h2>
-            <p className="text-slate-300 text-lg mb-10 leading-relaxed max-w-xl">
-              Non sai da dove iniziare? Seleziona un argomento qui sotto o scrivi liberamente nella chat. L'assistente è istruito per analizzare il tuo settore e proporti soluzioni concrete.
+            <p className="text-slate-300 text-base md:text-lg mb-8 leading-relaxed font-medium">
+              Non è un semplice chatbot. È un sistema istruito sulla mia esperienza per analizzare il tuo business e proporti subito soluzioni RAG o Web su misura.
             </p>
             
-            <div className="relative">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-6 flex items-center gap-2">
-                <MessageSquarePlus size={14} />
-                Suggerimenti rapidi
-              </h3>
-              
-              {/* MASONRY LAYOUT using CSS columns */}
-              <div className="columns-1 sm:columns-2 gap-4 space-y-4 w-full max-w-xl">
-                {SUGGESTED_QUESTIONS.map((q, idx) => (
-                  <div 
-                    key={idx}
-                    className="break-inside-avoid"
-                  >
-                    <button
-                      onClick={() => handleSend(q.text)}
-                      style={{ animationDelay: q.delay }}
-                      className="
-                        w-full text-left
-                        bg-slate-800/40 backdrop-blur-md hover:bg-slate-700/60 
-                        text-slate-200 p-4 rounded-xl
-                        transition-all duration-300
-                        border border-slate-700/50 hover:border-accent-500/50
-                        hover:shadow-lg hover:shadow-accent-500/10
-                        hover:text-white hover:-translate-y-1
-                        active:scale-95
-                        cursor-pointer
-                        animate-fade-in-up
-                        flex flex-col gap-2
-                        group
-                      "
-                    >
-                      <div className="text-accent-500 group-hover:text-accent-400 transition-colors bg-slate-900/50 p-2 rounded-lg w-fit">
-                        {q.icon}
-                      </div>
-                      <span className="text-sm font-medium leading-snug">
-                        {q.text}
-                      </span>
-                    </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {SUGGESTED_QUESTIONS.map((q, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => handleSend(q.text)}
+                  className="text-left bg-slate-900 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 p-3 rounded-xl transition-all duration-200 group flex items-start gap-3"
+                >
+                  <div className="mt-0.5 p-1.5 bg-slate-950 rounded-lg group-hover:scale-110 transition-transform border border-slate-800">
+                    {q.icon}
                   </div>
-                ))}
-              </div>
+                  <span className="text-xs md:text-sm text-slate-200 group-hover:text-white font-medium leading-snug">
+                    {q.text}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Right Side: Chat Interface */}
-          <div className="w-full lg:w-1/2 sticky top-24">
-            {/* MOBILE: h-[70vh] to allow keyboard and avoid overflow. DESKTOP: h-[600px] */}
-            <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden flex flex-col h-[70vh] md:h-[600px] w-full max-w-full transform transition-all hover:shadow-accent-500/10 relative group">
+          {/* Right Side: Chat Interface - FIXED FOR MOBILE VISIBILITY */}
+          <div className="w-full lg:w-7/12 mt-4 lg:mt-0">
+            {/* FIXED: Solid background colors, high contrast border, no transparency, robust flex layout */}
+            <div className="bg-slate-900 rounded-2xl border border-slate-600 shadow-2xl flex flex-col h-[600px] md:h-[700px] relative overflow-hidden z-20">
               
-              {/* Chat Header */}
-              <div className="bg-slate-950/90 p-4 border-b border-slate-800 flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-500 to-purple-600 flex items-center justify-center shrink-0 shadow-lg">
-                      <Bot size={22} className="text-white" aria-hidden="true" />
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-slate-950 rounded-full"></div>
+              {/* Header - Darker BG for contrast */}
+              <div className="bg-slate-950 p-4 border-b border-slate-800 flex items-center justify-between shrink-0 z-20">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center shadow-lg">
+                    <Bot size={18} className="text-white" />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-base">Manuel's AI Assistant</h3>
-                    <p className="text-xs text-slate-400">Powered by Gemini 1.5 Flash</p>
+                    <h3 className="text-white font-semibold text-sm">Manuel.AI</h3>
+                    <div className="flex items-center gap-1.5">
+                       <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                       <span className="text-[10px] text-slate-400 font-mono font-bold">Gemini 1.5 Flash • Online</span>
+                    </div>
                   </div>
                 </div>
                 
                 {hasUserMessages && (
-                  <button
-                    onClick={generateQuote}
-                    disabled={isGeneratingSummary || isLoading}
-                    className="hidden md:flex items-center gap-2 bg-slate-800 hover:bg-accent-600 disabled:opacity-50 disabled:cursor-not-allowed text-xs text-white px-3 py-1.5 rounded-lg transition-colors border border-slate-700 hover:border-accent-500 shadow-md animate-fade-in-up"
-                    title="Usa l'AI per riassumere la chat e compilare il modulo contatti"
-                  >
-                    {isGeneratingSummary ? (
-                       <Loader2 size={12} className="animate-spin" />
-                    ) : (
-                       <Sparkles size={12} />
-                    )}
-                    {isGeneratingSummary ? 'Elaborazione...' : 'Genera Preventivo'}
-                  </button>
+                   <button
+                     onClick={generateQuote}
+                     disabled={isGeneratingSummary || isLoading}
+                     className="flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white bg-slate-900 hover:bg-indigo-600/20 hover:border-indigo-500/50 border border-slate-700 px-3 py-1.5 rounded-lg transition-all"
+                   >
+                     {isGeneratingSummary ? <Loader2 size={14} className="animate-spin" /> : <ArrowUpRight size={14} />}
+                     <span className="hidden sm:inline">Genera Preventivo</span>
+                   </button>
                 )}
               </div>
 
-              {/* Chat Messages */}
+              {/* Messages Area - Lighter BG (Slate-900) */}
               <div 
                 ref={scrollContainerRef}
-                className="flex-1 overflow-y-auto p-4 md:p-6 space-y-8 bg-slate-900/30 scroll-smooth"
-                aria-live="polite"
-                aria-atomic="false"
-                role="log"
-                tabIndex={0}
-                aria-label="Cronologia messaggi chat"
+                className="flex-1 overflow-y-auto px-3 md:px-6 py-4 space-y-6 scroll-smooth scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent bg-slate-900"
               >
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`w-full ${msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'}`}
+                    className={`w-full flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {msg.role === 'model' ? (
-                      // AI MESSAGE STYLE (ChatGPT-like)
-                      <div className="flex gap-4 max-w-[95%] md:max-w-[90%]">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-accent-500 to-purple-600 flex items-center justify-center shrink-0 shadow-md mt-1">
-                          <Bot size={16} className="text-white" />
+                      <div className="flex gap-4 max-w-full md:max-w-[95%] group">
+                        <div className="w-8 h-8 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center shrink-0 mt-1">
+                          <Bot size={16} className="text-indigo-400" />
                         </div>
-                        <div className="flex-1 space-y-1">
-                            <div className="text-xs font-semibold text-slate-400 mb-1 ml-1">AI Assistant</div>
-                            <div className="text-slate-200 text-sm md:text-base leading-relaxed bg-slate-800/40 p-4 rounded-xl rounded-tl-none border border-slate-700/50 shadow-sm animate-fade-in-up">
+                        <div className="flex-1 min-w-0">
+                            <div className="text-slate-200 text-sm md:text-[15px] leading-7 markdown-content font-medium">
                                 <ReactMarkdown
                                 components={{
                                     p: ({node, ...props}) => <p className="mb-3 last:mb-0" {...props} />,
-                                    ul: ({node, ...props}) => <ul className="list-disc ml-4 mb-3 space-y-2 text-slate-300" {...props} />,
-                                    ol: ({node, ...props}) => <ol className="list-decimal ml-4 mb-3 space-y-2 text-slate-300" {...props} />,
+                                    ul: ({node, ...props}) => <ul className="mb-3 space-y-1 ml-1" {...props} />,
+                                    ol: ({node, ...props}) => <ol className="list-decimal ml-5 mb-3 space-y-1 text-slate-200" {...props} />,
                                     li: ({node, ...props}) => (
-                                        <li className="pl-1 marker:text-accent-500" {...props} />
+                                        <li className="flex items-start gap-2 text-slate-300" {...props}>
+                                            <span className="text-indigo-500 mt-1.5 text-[6px]">●</span>
+                                            <span className="flex-1">{props.children}</span>
+                                        </li>
                                     ),
-                                    strong: ({node, ...props}) => <strong className="font-bold text-accent-300" {...props} />,
-                                    code: ({node, ...props}) => <code className="bg-slate-950 px-1.5 py-0.5 rounded text-xs font-mono text-accent-200 border border-slate-700" {...props} />,
+                                    strong: ({node, ...props}) => <strong className="font-bold text-white" {...props} />,
+                                    h3: ({node, ...props}) => <h3 className="text-base font-bold text-white mt-4 mb-2 flex items-center gap-2" {...props} />,
+                                    code: ({node, ...props}) => <code className="bg-slate-950 px-1.5 py-0.5 rounded text-xs font-mono text-indigo-300 border border-slate-700" {...props} />,
                                 }}
                                 >
                                 {msg.text}
@@ -298,10 +265,12 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
                         </div>
                       </div>
                     ) : (
-                      // USER MESSAGE STYLE (Bubble)
-                      <div className="max-w-[85%] md:max-w-[75%] flex flex-col items-end">
-                         <div className="bg-accent-600 text-white p-4 rounded-2xl rounded-tr-sm shadow-md text-sm md:text-base leading-relaxed">
-                            <p>{msg.text}</p>
+                      <div className="flex gap-3 max-w-[85%]">
+                         <div className="bg-slate-800 text-white px-4 py-3 rounded-2xl rounded-tr-sm shadow-sm text-sm md:text-[15px] leading-relaxed border border-slate-700 font-medium">
+                            {msg.text}
+                         </div>
+                         <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center shrink-0 mt-1 overflow-hidden border border-slate-600">
+                             <User size={16} className="text-slate-300" />
                          </div>
                       </div>
                     )}
@@ -309,59 +278,54 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
                 ))}
                 
                 {isLoading && (
-                   <div className="flex gap-4 max-w-[90%] animate-pulse">
-                        <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 mt-1">
-                           <Loader2 size={16} className="animate-spin text-accent-500" />
+                   <div className="flex gap-4 max-w-full animate-pulse">
+                        <div className="w-8 h-8 rounded-full bg-indigo-600/10 border border-indigo-500/10 flex items-center justify-center shrink-0 mt-1">
+                           <Bot size={16} className="text-indigo-500/50" />
                         </div>
-                        <div className="flex-1 space-y-2 py-2">
-                             <div className="h-2 bg-slate-800 rounded w-24"></div>
-                             <div className="h-2 bg-slate-800 rounded w-48"></div>
+                        <div className="flex items-center gap-1 mt-3">
+                             <span className="w-2 h-2 bg-slate-600 rounded-full animate-bounce"></span>
+                             <span className="w-2 h-2 bg-slate-600 rounded-full animate-bounce delay-100"></span>
+                             <span className="w-2 h-2 bg-slate-600 rounded-full animate-bounce delay-200"></span>
                         </div>
                    </div>
                 )}
+                
+                <div className="h-2"></div>
               </div>
 
-              {/* Chat Input */}
-              <div className="p-4 bg-slate-950/90 border-t border-slate-800 shrink-0">
-                
-                {/* Mobile Quote Button */}
-                 {hasUserMessages && (
-                  <button
-                    onClick={generateQuote}
-                    disabled={isGeneratingSummary || isLoading}
-                    className="md:hidden w-full mb-3 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-xs text-white px-3 py-2 rounded-lg transition-colors border border-slate-700 animate-fade-in-up"
-                  >
-                    {isGeneratingSummary ? (
-                       <Loader2 size={14} className="animate-spin" />
-                    ) : (
-                       <Sparkles size={14} className="text-accent-500" />
-                    )}
-                    ⚡ Genera Preventivo da Chat
-                  </button>
-                )}
-
+              {/* Input Area - Darker BG (Slate-950) */}
+              <div className="p-3 md:p-4 bg-slate-950 border-t border-slate-800 shrink-0 z-20">
                 <form
                   onSubmit={(e) => { e.preventDefault(); handleSend(input); }}
-                  className="flex gap-3"
+                  className="relative flex items-end gap-2 bg-slate-900 border border-slate-700 rounded-xl p-2 focus-within:ring-2 focus-within:ring-indigo-500/50 focus-within:border-indigo-500 transition-all shadow-inner"
                 >
-                  <label htmlFor="chat-input" className="sr-only">Scrivi un messaggio</label>
-                  <input
-                    id="chat-input"
-                    type="text"
+                  <textarea
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend(input);
+                      }
+                    }}
                     placeholder="Chiedimi come ottimizzare il tuo lavoro..."
-                    className="flex-1 bg-slate-900 border border-slate-700 text-white text-base rounded-xl px-5 py-3 focus:outline-none focus:ring-2 focus:ring-accent-500 transition-all placeholder:text-slate-500 w-full hover:border-slate-600"
+                    rows={1}
+                    className="flex-1 bg-transparent text-white text-base px-3 py-2 focus:outline-none resize-none max-h-32 placeholder:text-slate-500 scrollbar-hide font-medium"
+                    style={{ minHeight: '44px' }}
+                    aria-label="Messaggio chat"
                   />
                   <button
                     type="submit"
                     disabled={isLoading || !input.trim()}
-                    aria-label="Invia messaggio"
-                    className="bg-accent-600 hover:bg-accent-500 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all flex items-center justify-center shrink-0 focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 shadow-lg shadow-accent-600/20"
+                    className="p-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:bg-slate-800 text-white rounded-lg transition-all flex items-center justify-center shrink-0 mb-0.5 shadow-lg"
+                    aria-label="Invia"
                   >
-                    <Send size={20} aria-hidden="true" />
+                    <Send size={18} />
                   </button>
                 </form>
+                <div className="text-center mt-2">
+                     <p className="text-[10px] text-slate-500 font-medium">L'AI può commettere errori. Verifica le informazioni importanti.</p>
+                </div>
               </div>
             </div>
           </div>
