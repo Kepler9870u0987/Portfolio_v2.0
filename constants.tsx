@@ -8,33 +8,35 @@ Sei l'assistente virtuale commerciale di Manuel Albanese.
 Il tuo obiettivo è VENDERE i servizi di Manuel spiegando i vantaggi pratici in modo semplice e accattivante.
 
 CHI E' IL TUO INTERLOCUTORE:
-Probabilmente un imprenditore o un manager non tecnico. NON usare termini complessi come "RAG", "Vector DB", "Microservizi" o "Embeddings" a meno che non ti vengano chiesti esplicitamente.
-Parla invece di: Risparmio di tempo, Riduzione errori, Sicurezza dei dati, Automazione.
+Probabilmente un imprenditore o un manager che vuole smettere di perdere tempo.
+Cerca soluzioni per:
+1. Gestire la conoscenza aziendale (evitare che quando un dipendente va via, le informazioni vadano perse).
+2. Velocizzare l'inserimento di nuove risorse (Passaggio di consegne).
+3. Avere un sito web professionale.
 
 LA TUA STRATEGIA DI VENDITA:
-1. **Semplifica**:
-   - Non dire "Sistema RAG su documenti", dì "Un 'Cervello Digitale' che legge i tuoi manuali e risponde alle domande dello staff in un secondo".
-   - Non dire "Automazione Python", dì "Un assistente invisibile che scrive report e email noiose al posto tuo".
+1. **Focus sul Knowledge Management (RAG)**:
+   - Spiega che Manuel crea "Cervelli Aziendali". I documenti non muoiono nelle cartelle, ma diventano risposte immediate.
+   - Parola chiave: "Passaggio di consegne automatico".
    
-2. **Usa la Leva della Competenza (Background Enterprise)**:
-   - Manuel non è un amatore: ha maturato esperienza lavorando in **team di sviluppo** su progetti complessi per clienti del settore finanziario.
-   - Messaggio chiave: "Ha imparato il rigore e l'attenzione alla sicurezza lavorando su progetti per grandi istituti finanziari, e applica lo stesso standard professionale al tuo progetto".
+2. **Focus sulla Generazione Documentale**:
+   - Spiega che Manuel crea sistemi con "Template Base" intelligenti: l'AI scrive bozze di mail, preventivi o report basandosi sullo storico aziendale.
 
-3. **Call to Action**:
-   - Spingi gentilmente l'utente a contattare Manuel tramite il form nel sito o su LinkedIn per una chiacchierata senza impegno.
+3. **Background Tecnico**:
+   - Sottolinea che Manuel viene dal mondo Enterprise/Bancario: sicurezza e affidabilità sono al primo posto.
 
 I SERVIZI (Tradotti in linguaggio Business):
-- **Gestione Conoscenza Aziendale (RAG)**: Per smettere di perdere ore a cercare informazioni nei file PDF o Word.
-- **AI Privata & Sicura**: Per usare l'intelligenza artificiale senza regalare i propri dati alle multinazionali (GDPR compliant).
-- **Sviluppo Web Avanzato**: Siti che non sono solo vetrine, ma strumenti di lavoro veloci e affidabili.
+- **Siti Web Enterprise**: Non semplici vetrine, ma applicazioni solide.
+- **Knowledge Management System (RAG)**: Per gestire la conoscenza aziendale e velocizzare il retrieval delle info.
+- **AI Templates & Automazione**: Per generare documenti e mail standardizzate in un click.
 
 TONO:
-Empatico, professionale ma caldo, sicuro di sé, orientato alla soluzione.
+Professionale, orientato al ROI (Ritorno sull'investimento), rassicurante sulla privacy dei dati.
 `;
 
 export const NAV_LINKS = [
   { label: 'Chi Sono', href: '#about' },
-  { label: 'Processo AI', href: '#workflow' },
+  { label: 'Metodo RAG', href: '#workflow' },
   { label: 'Servizi', href: '#services' },
   { label: 'Certificazioni', href: '#certifications' },
   { label: 'Chat Demo', href: '#ai-demo' },
@@ -43,47 +45,47 @@ export const NAV_LINKS = [
 
 export const SERVICES: Service[] = [
   {
-    id: 'rag',
-    title: 'Knowledge Management (RAG)',
-    description: 'Trasforma i tuoi documenti aziendali in una "banca dati parlante". Riduci i tempi di onboarding e retrieval delle informazioni.',
-    icon: 'BrainCircuit',
-    features: [
-      { label: 'Chatbot su dati proprietari', tooltip: 'L\'AI apprende solo dai tuoi PDF e documenti interni, garantendo privacy.' },
-      { label: 'Ricerca semantica avanzata', tooltip: 'Trova concetti, non solo parole chiave esatte.' },
-      { label: 'Citazione delle fonti', tooltip: 'Il sistema indica sempre da quale documento proviene l\'informazione.' }
-    ]
-  },
-  {
-    id: 'local-ai',
-    title: 'Private AI & Local LLMs',
-    description: 'Massima sicurezza per i tuoi dati. Eseguiamo modelli AI (SLM) direttamente sulla tua infrastruttura o in cloud privato isolato.',
-    icon: 'ShieldCheck',
-    features: [
-      { label: '100% GDPR Compliant', tooltip: 'I dati non lasciano mai i tuoi server. Ideale per settore medico, legale e finance.' },
-      { label: 'No Data Training', tooltip: 'I tuoi dati non vengono usati per addestrare modelli pubblici.' },
-      { label: 'Zero Costi API', tooltip: 'Abbattimento dei costi ricorrenti per token sfruttando hardware locale.' }
-    ]
-  },
-  {
     id: 'web',
-    title: 'Sviluppo Web Enterprise',
-    description: 'Applicazioni web complesse, accessibili e sicure. Dal design in Figma allo sviluppo in React/Angular e .NET/Java.',
+    title: 'Sviluppo Web & Portali',
+    description: 'Il servizio "Core": Siti web moderni, veloci e accessibili. Dal design Figma allo sviluppo React/Next.js.',
     icon: 'Globe',
     features: [
-      { label: 'Microservizi & API REST', tooltip: 'Architetture scalabili basate su Spring Boot o .NET Core.' },
-      { label: 'UI/UX & Accessibilità', tooltip: 'Interfacce inclusive progettate su Figma e sviluppate pixel-perfect.' },
-      { label: 'Modernizzazione Legacy', tooltip: 'Trasformazione di vecchi applicativi in moderne Web App.' }
+      { label: 'Restyling Aziendale', tooltip: 'Modernizza la tua presenza online con design attuali.' },
+      { label: 'Dashboard Gestionali', tooltip: 'Pannelli di controllo personalizzati per i tuoi dati.' },
+      { label: 'SEO & Performance', tooltip: 'Siti ottimizzati per i motori di ricerca e ultra-veloci.' }
+    ]
+  },
+  {
+    id: 'rag',
+    title: 'Knowledge Management (RAG)',
+    description: 'Centralizza la conoscenza aziendale. Un motore di ricerca intelligente per i tuoi documenti interni.',
+    icon: 'BrainCircuit',
+    features: [
+      { label: 'Passaggio di Consegne', tooltip: 'Il know-how resta in azienda anche se il personale cambia. Onboarding istantaneo.' },
+      { label: 'Retrieval Veloce', tooltip: 'Trova procedure e contratti in secondi interrogando l\'AI, non cercando nelle cartelle.' },
+      { label: 'Chat con i tuoi Dati', tooltip: 'Fai domande naturali ai tuoi manuali PDF, Excel e Word.' }
     ]
   },
   {
     id: 'automation',
-    title: 'Automazione Workflow',
-    description: 'Agenti AI che lavorano per te. Generazione automatica di documenti, analisi email e reportistica integrata.',
+    title: 'AI Templates & Docs',
+    description: 'Sfrutta l\'AI generativa per creare preventivi, mail e report partendo da template base pre-configurati.',
     icon: 'FileText',
     features: [
-      { label: 'Drafting Documentale', tooltip: 'Crea bozze di contratti o report in secondi basandosi su template.' },
-      { label: 'Integrazione CRM/ERP', tooltip: 'Collega l\'intelligenza artificiale ai tuoi software gestionali esistenti.' },
-      { label: 'Data Entry Intelligente', tooltip: 'Estrai automaticamente dati da PDF, fatture e immagini per popolare Excel o gestionali, azzerando gli errori manuali.' }
+      { label: 'Generazione Preventiva', tooltip: 'L\'AI compila bozze di documenti basandosi sui tuoi standard aziendali.' },
+      { label: 'Mail Assistant', tooltip: 'Risposte automatiche o bozze di email basate sullo storico delle conversazioni.' },
+      { label: 'Reportistica Automatica', tooltip: 'Da dati grezzi a report narrativi in un click.' }
+    ]
+  },
+  {
+    id: 'local-ai',
+    title: 'Private AI & Security',
+    description: 'Soluzioni AI che girano "in casa" o su cloud privati. Massima sicurezza per dati sensibili.',
+    icon: 'ShieldCheck',
+    features: [
+      { label: 'GDPR Compliant', tooltip: 'I dati aziendali non vengono usati per addestrare modelli pubblici.' },
+      { label: 'Local LLMs', tooltip: 'Uso di modelli Open Source (Llama, Mistral) per abbattere i costi di licenza.' },
+      { label: 'Integrazione Legacy', tooltip: 'Connettiamo l\'AI ai tuoi vecchi database SQL o gestionali.' }
     ]
   }
 ];
@@ -121,21 +123,21 @@ export const CERTIFICATIONS: Certification[] = [
 
 export const PROJECTS: Project[] = [
   {
-    title: "Banking Compliance Dashboard",
-    description: "Sviluppo frontend all'interno di un team per un applicativo di segnalazioni bancarie. Focus su accessibilità e gestione dati.",
-    tags: ["Angular", "Spring", "Figma", "Teamwork"],
+    title: "Corporate Knowledge Base",
+    description: "Sistema RAG per azienda metalmeccanica. Ridotto del 60% il tempo di ricerca manuali tecnici per i nuovi assunti.",
+    tags: ["RAG", "Python", "LangChain", "React"],
     highlight: true
   },
   {
-    title: "HR Management Migration",
-    description: "Collaborazione alla migrazione di un gestionale HR legacy verso architettura a microservizi.",
-    tags: ["Java", "Microservices", "API REST", "SQL"],
+    title: "AI Email Generator",
+    description: "Plugin per la generazione automatica di risposte ai clienti basate su template aziendali pre-approvati.",
+    tags: ["OpenAI API", "Chrome Extension", "Automation"],
     highlight: false
   },
   {
-    title: "Legal RAG Assistant (Private)",
-    description: "Sistema AI locale per analisi contratti. Nessun dato esce dai server dello studio legale. GDPR Compliant.",
-    tags: ["Local LLM", "Python", "Privacy", "Ollama"],
+    title: "Portale Bancario Compliance",
+    description: "Sviluppo Frontend per dashboard finanziaria. Focus su sicurezza e visualizzazione dati complessi.",
+    tags: ["Angular", "Enterprise", "UI/UX"],
     highlight: false
   }
 ];
