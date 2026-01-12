@@ -310,7 +310,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({ onTransferChat, onChatUp
                     }}
                     placeholder="Chiedimi come ottimizzare il tuo lavoro..."
                     rows={1}
-                    className="flex-1 bg-transparent text-white text-base px-3 py-2 focus:outline-none resize-none max-h-32 placeholder:text-slate-500 scrollbar-hide font-medium"
+                    className="flex-1 bg-transparent text-white text-base px-3 py-2 focus:outline-none resize-none max-h-32 placeholder:text-slate-500 no-scrollbar font-medium"
                     style={{ minHeight: '44px' }}
                     aria-label="Messaggio chat"
                   />
