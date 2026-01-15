@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Database, Code, FileText, Linkedin, ChevronsDown } from 'lucide-react';
+import { ArrowRight, Database, Code, FileText, Linkedin, ChevronsDown, Calendar } from 'lucide-react';
 import { SectionId } from '../types';
 
 export const Hero: React.FC = () => {
@@ -18,7 +18,7 @@ export const Hero: React.FC = () => {
           </p>
           
           {/* Main CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in-up delay-300">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 opacity-0 animate-fade-in-up delay-300">
             <a 
               href={`#${SectionId.DEMO}`}
               className="px-8 py-4 bg-accent-600 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 group shadow-lg shadow-accent-600/20 hover:bg-accent-700 hover:shadow-accent-600/40 hover:scale-105 active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-accent-500 focus:outline-none"
@@ -26,8 +26,19 @@ export const Hero: React.FC = () => {
               Parla con la mia AI
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </a>
+
+            {/* Booking Button */}
+            <a 
+              href="https://calendly.com/manuel-albanese-lavoro/30min" 
+              target="_blank" 
+              rel="noreferrer"
+              className="px-8 py-4 bg-slate-800 text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 hover:bg-slate-700 hover:text-accent-300 hover:scale-105 active:scale-95 shadow-lg border border-slate-700 focus:ring-2 focus:ring-offset-2 focus:ring-slate-700 focus:outline-none"
+            >
+              <Calendar size={20} aria-hidden="true" />
+              Prenota una Call
+            </a>
             
-            {/* LinkedIn Button in Hero */}
+            {/* LinkedIn Button */}
             <a 
               href="https://www.linkedin.com/in/manuel-albanese" 
               target="_blank" 
@@ -35,7 +46,7 @@ export const Hero: React.FC = () => {
               className="px-8 py-4 bg-[#0077b5] text-white rounded-lg font-bold transition-all duration-300 flex items-center justify-center gap-2 hover:bg-[#006396] hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20 focus:ring-2 focus:ring-offset-2 focus:ring-[#0077b5] focus:outline-none"
             >
               <Linkedin size={20} aria-hidden="true" />
-              Contattami su LinkedIn
+              LinkedIn
             </a>
           </div>
 

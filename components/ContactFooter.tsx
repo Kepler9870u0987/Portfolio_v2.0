@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Linkedin, Send, Loader2, CheckCircle, AlertCircle, Settings, Copy, Check, Sparkles, Wand2 } from 'lucide-react';
+import { Linkedin, Send, Loader2, CheckCircle, AlertCircle, CalendarClock, Wand2 } from 'lucide-react';
 import { send } from '@emailjs/browser';
 import { sendMessageToGemini } from '../services/geminiService';
 import { SectionId } from '../types';
@@ -141,6 +141,29 @@ export const ContactFooter: React.FC<ContactFooterProps> = ({ initialMessage, la
               Contattami per discutere di come ottimizzare il passaggio di consegne e automatizzare i tuoi documenti.
             </p>
             
+            {/* Booking Call Section */}
+            <div className="mb-8 bg-slate-900/50 p-6 rounded-xl border border-slate-700/50 hover:border-accent-500/30 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-accent-600/20 rounded-lg text-accent-400">
+                   <CalendarClock size={24} />
+                </div>
+                <div>
+                   <h3 className="text-white font-bold text-lg mb-1">Preferisci parlare a voce?</h3>
+                   <p className="text-slate-300 text-sm mb-4">
+                     Prenota una consulenza conoscitiva gratuita di 15 minuti. Analizziamo insieme le tue esigenze senza impegno.
+                   </p>
+                   <a 
+                     href="https://calendly.com/manuel-albanese-lavoro/30min" 
+                     target="_blank" 
+                     rel="noreferrer"
+                     className="inline-flex items-center gap-2 text-sm font-bold bg-white text-slate-900 px-4 py-2 rounded-lg hover:bg-slate-200 transition-colors"
+                   >
+                     Prenota Appuntamento <CalendarClock size={16} />
+                   </a>
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-4 mb-8">
               <button 
                 onClick={copyForLinkedIn}
